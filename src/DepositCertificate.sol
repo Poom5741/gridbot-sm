@@ -18,26 +18,26 @@ contract DepositCertificate is ERC20, Ownable {
     address public immutable settlementWallet;
     
     // Fixed wallet addresses for fund split
-    address public immutable ivWallet;         // 55%
-    address public immutable dvWallet;         // 5%
-    address public immutable adWallet;       // 5%
-    address public immutable maWallet;      // 15%
-    address public immutable owWallet;         // 5%
+    address public immutable ivWallet;
+    address public immutable dvWallet;
+    address public immutable adWallet;
+    address public immutable maWallet;
+    address public immutable owWallet;
 
     // Dynamic MLM wallet addresses (can be updated by owner)
-    address public ml1Wallet;                  // 10%
-    address public ml2Wallet;                  // 3%
-    address public ml3Wallet;                  // 2%
+    address public ml1Wallet;
+    address public ml2Wallet;
+    address public ml3Wallet;
 
     // Constants for fund split percentages (in basis points)
-    uint256 public constant INVEST_PERCENTAGE = 5500;     // 55%
-    uint256 public constant DEV_OPS_PERCENTAGE = 500;      // 5%
-    uint256 public constant ADVISOR_PERCENTAGE = 500;      // 5%
-    uint256 public constant MARKETING_PERCENTAGE = 1500;   // 15%
-    uint256 public constant OWNER_PERCENTAGE = 500;        // 5%
-    uint256 public constant LEVEL1_PERCENTAGE = 1000;      // 10%
-    uint256 public constant LEVEL2_PERCENTAGE = 300;       // 3%
-    uint256 public constant LEVEL3_PERCENTAGE = 200;       // 2%
+    uint256 public constant INVEST_PERCENTAGE = 5500;
+    uint256 public constant DEV_OPS_PERCENTAGE = 500;
+    uint256 public constant ADVISOR_PERCENTAGE = 500;
+    uint256 public constant MARKETING_PERCENTAGE = 1500;
+    uint256 public constant OWNER_PERCENTAGE = 500;
+    uint256 public constant LEVEL1_PERCENTAGE = 1000;
+    uint256 public constant LEVEL2_PERCENTAGE = 300;
+    uint256 public constant LEVEL3_PERCENTAGE = 200;
 
     // Event emitted when wallet addresses are updated
     event WalletAddressesUpdated(
@@ -145,9 +145,9 @@ contract DepositCertificate is ERC20, Ownable {
     /**
      * @dev Deposit USDT tokens and receive certificate tokens in return
      * @param amount The amount of USDT tokens to deposit
-     * @param _ml1Wallet Address for Level 1 MLM Incentive (10%)
-     * @param _ml2Wallet Address for Level 2 MLM Incentive (3%)
-     * @param _ml3Wallet Address for Level 3 MLM Incentive (2%)
+     * @param _ml1Wallet Address for Level 1 MLM Incentive
+     * @param _ml2Wallet Address for Level 2 MLM Incentive
+     * @param _ml3Wallet Address for Level 3 MLM Incentive
      */
     function deposit(
         uint256 amount,
@@ -311,14 +311,14 @@ contract DepositCertificate is ERC20, Ownable {
     {
         // Return all wallet addresses including immutable ones
         return (
-            ivWallet,      // 55% - immutable
-            dvWallet,      // 5% - immutable
-            adWallet,     // 5% - immutable
-            maWallet,   // 15% - immutable
-            owWallet,       // 5% - immutable
-            ml1Wallet,      // 10% - dynamic
-            ml2Wallet,      // 3% - dynamic
-            ml3Wallet       // 2% - dynamic
+            ivWallet,
+            dvWallet,
+            adWallet,
+            maWallet,
+            owWallet,
+            ml1Wallet,
+            ml2Wallet,
+            ml3Wallet
         );
     }
 

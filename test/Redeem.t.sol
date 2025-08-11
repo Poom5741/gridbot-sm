@@ -111,9 +111,6 @@ contract RedeemTest is Test {
         vm.warp(block.timestamp + _seconds);
     }
 
-    /**
-     * @dev Test to verify that the test setup is working correctly
-     */
     function test_SetUp() public view {
         assert(address(depositCertificate) != address(0));
         assert(address(usdt) != address(0));
@@ -122,9 +119,6 @@ contract RedeemTest is Test {
         assertEq(depositCertificate.ivWallet(), ivWallet);
     }
 
-    /**
-     * @dev Test a successful redemption after 5 years (no penalty)
-     */
     function test_redeem_successful_no_penalty() public {
         // Arrange
         uint256 depositAmount = 100 * 10**6; // 100 USDT
@@ -150,9 +144,6 @@ contract RedeemTest is Test {
         assertEq(usdt.balanceOf(settlementWallet), settlementWalletUsdtBalanceBefore - depositAmount, "Settlement wallet USDT balance should decrease by full deposit amount");
     }
 
-    /**
-     * @dev Test a successful redemption with a partial penalty (between 1-5 years)
-     */
     function test_redeem_successful_partial_penalty() public {
         // Arrange
         uint256 depositAmount = 100 * 10**6; // 100 USDT
@@ -181,9 +172,6 @@ contract RedeemTest is Test {
         assertTrue(penaltyAmount > 0 && penaltyAmount < depositAmount / 2, "Penalty should be partial");
     }
 
-    /**
-     * @dev Test a successful redemption with the maximum penalty (less than 1 year)
-     */
     function test_redeem_successful_max_penalty() public {
         // Arrange
         uint256 depositAmount = 100 * 10**6; // 100 USDT
@@ -212,9 +200,6 @@ contract RedeemTest is Test {
         assertEq(penaltyAmount, depositAmount / 2, "Penalty should be 50%");
     }
 
-    /**
-     * @dev Test that redeeming with insufficient balance fails
-     */
     function test_redeem_fails_insufficient_balance() public {
         // Arrange
         uint256 depositAmount = 100 * 10**6; // 100 USDT
@@ -230,9 +215,6 @@ contract RedeemTest is Test {
         depositCertificate.redeem(redeemAmount);
     }
 
-    /**
-     * @dev Test that redeeming with zero amount fails
-     */
     function test_redeem_fails_zero_amount() public {
         // Arrange
         uint256 depositAmount = 100 * 10**6; // 100 USDT
@@ -248,9 +230,6 @@ contract RedeemTest is Test {
         depositCertificate.redeem(redeemAmount);
     }
 
-    /**
-     * @dev Test that redeeming from an address with no certificates fails
-     */
     function test_redeem_fails_no_certificates() public {
         // Arrange
         uint256 redeemAmount = 100 * 10**6; // 100 USDT
