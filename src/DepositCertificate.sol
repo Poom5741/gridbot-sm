@@ -18,33 +18,33 @@ contract DepositCertificate is ERC20, Ownable {
     address public immutable settlementWallet;
     
     // Fixed wallet addresses for fund split
-    address public immutable investWallet;         // 55%
-    address public immutable devOpsWallet;         // 5%
-    address public immutable advisorWallet;       // 5%
-    address public immutable marketingWallet;      // 15%
-    address public immutable ownerWallet;         // 5%
+    address public immutable ivWallet;
+    address public immutable dvWallet;
+    address public immutable adWallet;
+    address public immutable maWallet;
+    address public immutable owWallet;
 
     // Dynamic MLM wallet addresses (can be updated by owner)
-    address public level1Wallet;                  // 10%
-    address public level2Wallet;                  // 3%
-    address public level3Wallet;                  // 2%
+    address public ml1Wallet;
+    address public ml2Wallet;
+    address public ml3Wallet;
 
     // Constants for fund split percentages (in basis points)
-    uint256 public constant INVEST_PERCENTAGE = 5500;     // 55%
-    uint256 public constant DEV_OPS_PERCENTAGE = 500;      // 5%
-    uint256 public constant ADVISOR_PERCENTAGE = 500;      // 5%
-    uint256 public constant MARKETING_PERCENTAGE = 1500;   // 15%
-    uint256 public constant OWNER_PERCENTAGE = 500;        // 5%
-    uint256 public constant LEVEL1_PERCENTAGE = 1000;      // 10%
-    uint256 public constant LEVEL2_PERCENTAGE = 300;       // 3%
-    uint256 public constant LEVEL3_PERCENTAGE = 200;       // 2%
+    uint256 public constant INVEST_PERCENTAGE = 5500;
+    uint256 public constant DEV_OPS_PERCENTAGE = 500;
+    uint256 public constant ADVISOR_PERCENTAGE = 500;
+    uint256 public constant MARKETING_PERCENTAGE = 1500;
+    uint256 public constant OWNER_PERCENTAGE = 500;
+    uint256 public constant LEVEL1_PERCENTAGE = 1000;
+    uint256 public constant LEVEL2_PERCENTAGE = 300;
+    uint256 public constant LEVEL3_PERCENTAGE = 200;
 
     // Event emitted when wallet addresses are updated
     event WalletAddressesUpdated(
         address indexed updater,
-        address newLevel1Wallet,
-        address newLevel2Wallet,
-        address newLevel3Wallet
+        address newMl1Wallet,
+        address newMl2Wallet,
+        address newMl3Wallet
     );
 
     // Event emitted when wallet addresses are updated
@@ -69,9 +69,9 @@ contract DepositCertificate is ERC20, Ownable {
         address indexed depositor,
         uint256 amount,
         uint256 timestamp,
-        address level1Wallet,
-        address level2Wallet,
-        address level3Wallet
+        address ml1Wallet,
+        address ml2Wallet,
+        address ml3Wallet
     );
 
     // Event emitted when a timestamp is updated
@@ -97,45 +97,45 @@ contract DepositCertificate is ERC20, Ownable {
      * @dev Constructor that initializes the Deposit Certificate contract
      * @param _usdtTokenAddress The address of the USDT token contract
      * @param _settlementWalletAddress The address that will receive USDT deposits
-     * @param _investWalletAddress The address that will receive 55% of deposits
-     * @param _devOpsWalletAddress The address that will receive 5% of deposits
-     * @param _advisorWalletAddress The address that will receive 5% of deposits
-     * @param _marketingWalletAddress The address that will receive 15% of deposits
-     * @param _ownerWalletAddress The address that will receive 5% of deposits
+     * @param _ivWalletAddress The address that will receive 55% of deposits
+     * @param _dvWalletAddress The address that will receive 5% of deposits
+     * @param _adWalletAddress The address that will receive 5% of deposits
+     * @param _maWalletAddress The address that will receive 15% of deposits
+     * @param _owWalletAddress The address that will receive 5% of deposits
      */
     constructor(
         address _usdtTokenAddress,
         address _settlementWalletAddress,
-        address _investWalletAddress,
-        address _devOpsWalletAddress,
-        address _advisorWalletAddress,
-        address _marketingWalletAddress,
-        address _ownerWalletAddress,
-        address _level1WalletAddress,
-        address _level2WalletAddress,
-        address _level3WalletAddress
+        address _ivWalletAddress,
+        address _dvWalletAddress,
+        address _adWalletAddress,
+        address _maWalletAddress,
+        address _owWalletAddress,
+        address _ml1WalletAddress,
+        address _ml2WalletAddress,
+        address _ml3WalletAddress
     ) ERC20("Deposit Certificate", "DC") Ownable(msg.sender) {
         require(_usdtTokenAddress != address(0), "USDT token address cannot be zero");
         require(_settlementWalletAddress != address(0), "Settlement wallet address cannot be zero");
-        require(_investWalletAddress != address(0), "Invest wallet address cannot be zero");
-        require(_devOpsWalletAddress != address(0), "DevOps wallet address cannot be zero");
-        require(_advisorWalletAddress != address(0), "Advisor wallet address cannot be zero");
-        require(_marketingWalletAddress != address(0), "Marketing wallet address cannot be zero");
-        require(_ownerWalletAddress != address(0), "Owner wallet address cannot be zero");
-        require(_level1WalletAddress != address(0), "Level 1 wallet address cannot be zero");
-        require(_level2WalletAddress != address(0), "Level 2 wallet address cannot be zero");
-        require(_level3WalletAddress != address(0), "Level 3 wallet address cannot be zero");
+        require(_ivWalletAddress != address(0), "Invest wallet address cannot be zero");
+        require(_dvWalletAddress != address(0), "DevOps wallet address cannot be zero");
+        require(_adWalletAddress != address(0), "Advisor wallet address cannot be zero");
+        require(_maWalletAddress != address(0), "Marketing wallet address cannot be zero");
+        require(_owWalletAddress != address(0), "Owner wallet address cannot be zero");
+        require(_ml1WalletAddress != address(0), "Level 1 wallet address cannot be zero");
+        require(_ml2WalletAddress != address(0), "Level 2 wallet address cannot be zero");
+        require(_ml3WalletAddress != address(0), "Level 3 wallet address cannot be zero");
         
         usdtToken = _usdtTokenAddress;
         settlementWallet = _settlementWalletAddress;
-        investWallet = _investWalletAddress;
-        devOpsWallet = _devOpsWalletAddress;
-        advisorWallet = _advisorWalletAddress;
-        marketingWallet = _marketingWalletAddress;
-        ownerWallet = _ownerWalletAddress;
-        level1Wallet = _level1WalletAddress;
-        level2Wallet = _level2WalletAddress;
-        level3Wallet = _level3WalletAddress;
+        ivWallet = _ivWalletAddress;
+        dvWallet = _dvWalletAddress;
+        adWallet = _adWalletAddress;
+        maWallet = _maWalletAddress;
+        owWallet = _owWalletAddress;
+        ml1Wallet = _ml1WalletAddress;
+        ml2Wallet = _ml2WalletAddress;
+        ml3Wallet = _ml3WalletAddress;
     }
 
     function decimals() public view virtual override returns (uint8) {
@@ -145,22 +145,22 @@ contract DepositCertificate is ERC20, Ownable {
     /**
      * @dev Deposit USDT tokens and receive certificate tokens in return
      * @param amount The amount of USDT tokens to deposit
-     * @param _level1Wallet Address for Level 1 MLM Incentive (10%)
-     * @param _level2Wallet Address for Level 2 MLM Incentive (3%)
-     * @param _level3Wallet Address for Level 3 MLM Incentive (2%)
+     * @param _ml1Wallet Address for Level 1 MLM Incentive
+     * @param _ml2Wallet Address for Level 2 MLM Incentive
+     * @param _ml3Wallet Address for Level 3 MLM Incentive
      */
     function deposit(
         uint256 amount,
-        address _level1Wallet,
-        address _level2Wallet,
-        address _level3Wallet
+        address _ml1Wallet,
+        address _ml2Wallet,
+        address _ml3Wallet
     ) external {
         require(amount > 0, "Deposit amount must be greater than zero");
         
         // Validate MLM wallet addresses
-        require(_level1Wallet != address(0), "Level 1 wallet address cannot be zero");
-        require(_level2Wallet != address(0), "Level 2 wallet address cannot be zero");
-        require(_level3Wallet != address(0), "Level 3 wallet address cannot be zero");
+        require(_ml1Wallet != address(0), "Level 1 wallet address cannot be zero");
+        require(_ml2Wallet != address(0), "Level 2 wallet address cannot be zero");
+        require(_ml3Wallet != address(0), "Level 3 wallet address cannot be zero");
         
         // Total percentage should be 100%
         uint256 totalPercentage = INVEST_PERCENTAGE + DEV_OPS_PERCENTAGE + ADVISOR_PERCENTAGE +
@@ -193,14 +193,14 @@ contract DepositCertificate is ERC20, Ownable {
         );
         
         // Transfer USDT from user to all wallets atomically
-        IERC20(usdtToken).safeTransferFrom(msg.sender, investWallet, investAmount);
-        IERC20(usdtToken).safeTransferFrom(msg.sender, devOpsWallet, devOpsAmount);
-        IERC20(usdtToken).safeTransferFrom(msg.sender, advisorWallet, advisorAmount);
-        IERC20(usdtToken).safeTransferFrom(msg.sender, marketingWallet, marketingAmount);
-        IERC20(usdtToken).safeTransferFrom(msg.sender, ownerWallet, ownerAmount);
-        IERC20(usdtToken).safeTransferFrom(msg.sender, _level1Wallet, level1Amount);
-        IERC20(usdtToken).safeTransferFrom(msg.sender, _level2Wallet, level2Amount);
-        IERC20(usdtToken).safeTransferFrom(msg.sender, _level3Wallet, level3Amount);
+        IERC20(usdtToken).safeTransferFrom(msg.sender, ivWallet, investAmount);
+        IERC20(usdtToken).safeTransferFrom(msg.sender, dvWallet, devOpsAmount);
+        IERC20(usdtToken).safeTransferFrom(msg.sender, adWallet, advisorAmount);
+        IERC20(usdtToken).safeTransferFrom(msg.sender, maWallet, marketingAmount);
+        IERC20(usdtToken).safeTransferFrom(msg.sender, owWallet, ownerAmount);
+        IERC20(usdtToken).safeTransferFrom(msg.sender, _ml1Wallet, level1Amount);
+        IERC20(usdtToken).safeTransferFrom(msg.sender, _ml2Wallet, level2Amount);
+        IERC20(usdtToken).safeTransferFrom(msg.sender, _ml3Wallet, level3Amount);
         
         // Mint certificate tokens to the depositor
         _mint(msg.sender, amount);
@@ -209,7 +209,7 @@ contract DepositCertificate is ERC20, Ownable {
         lastDepositTime[msg.sender] = block.timestamp;
         
         // Emit the Deposited event
-        emit Deposited(msg.sender, amount, block.timestamp, _level1Wallet, _level2Wallet, _level3Wallet);
+        emit Deposited(msg.sender, amount, block.timestamp, _ml1Wallet, _ml2Wallet, _ml3Wallet);
     }
 
     /**
@@ -259,66 +259,66 @@ contract DepositCertificate is ERC20, Ownable {
 
     /**
      * @dev Update MLM wallet addresses (owner only function)
-     * @param _level1Wallet New address for Level 1 MLM Incentive
-     * @param _level2Wallet New address for Level 2 MLM Incentive
-     * @param _level3Wallet New address for Level 3 MLM Incentive
+     * @param _ml1Wallet New address for Level 1 MLM Incentive
+     * @param _ml2Wallet New address for Level 2 MLM Incentive
+     * @param _ml3Wallet New address for Level 3 MLM Incentive
      */
     function updateMLMWallets(
-        address _level1Wallet,
-        address _level2Wallet,
-        address _level3Wallet
+        address _ml1Wallet,
+        address _ml2Wallet,
+        address _ml3Wallet
     ) external onlyOwner {
-        require(_level1Wallet != address(0), "Level 1 wallet address cannot be zero");
-        require(_level2Wallet != address(0), "Level 2 wallet address cannot be zero");
-        require(_level3Wallet != address(0), "Level 3 wallet address cannot be zero");
+        require(_ml1Wallet != address(0), "Level 1 wallet address cannot be zero");
+        require(_ml2Wallet != address(0), "Level 2 wallet address cannot be zero");
+        require(_ml3Wallet != address(0), "Level 3 wallet address cannot be zero");
         
-        level1Wallet = _level1Wallet;
-        level2Wallet = _level2Wallet;
-        level3Wallet = _level3Wallet;
+        ml1Wallet = _ml1Wallet;
+        ml2Wallet = _ml2Wallet;
+        ml3Wallet = _ml3Wallet;
         
         emit WalletAddressesUpdated(
             msg.sender,
-            _level1Wallet,
-            _level2Wallet,
-            _level3Wallet
+            _ml1Wallet,
+            _ml2Wallet,
+            _ml3Wallet
         );
     }
 
     /**
      * @dev Get current wallet addresses for fund split
-     * @return invest Investment wallet address
-     * @return devOps DevOps wallet address
-     * @return advisor Advisor wallet address
-     * @return marketing Marketing wallet address
-     * @return owner Owner wallet address
-     * @return level1 Level 1 MLM wallet address
-     * @return level2 Level 2 MLM wallet address
-     * @return level3 Level 3 MLM wallet address
+     * @return iv Investment wallet address
+     * @return dv DevOps wallet address
+     * @return ad Advisor wallet address
+     * @return ma Marketing wallet address
+     * @return ow Owner wallet address
+     * @return ml1 Level 1 MLM wallet address
+     * @return ml2 Level 2 MLM wallet address
+     * @return ml3 Level 3 MLM wallet address
      */
     function getFundSplitWallets()
         external
         view
         returns (
-            address invest,
-            address devOps,
-            address advisor,
-            address marketing,
-            address owner,
-            address level1,
-            address level2,
-            address level3
+            address iv,
+            address dv,
+            address ad,
+            address ma,
+            address ow,
+            address ml1,
+            address ml2,
+            address ml3
         )
     {
         // Return all wallet addresses including immutable ones
         return (
-            investWallet,      // 55% - immutable
-            devOpsWallet,      // 5% - immutable
-            advisorWallet,     // 5% - immutable
-            marketingWallet,   // 15% - immutable
-            ownerWallet,       // 5% - immutable
-            level1Wallet,      // 10% - dynamic
-            level2Wallet,      // 3% - dynamic
-            level3Wallet       // 2% - dynamic
+            ivWallet,
+            dvWallet,
+            adWallet,
+            maWallet,
+            owWallet,
+            ml1Wallet,
+            ml2Wallet,
+            ml3Wallet
         );
     }
 
