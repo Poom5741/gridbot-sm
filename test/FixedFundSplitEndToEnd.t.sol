@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
-import {DepositCertificate} from "../src/DepositCertificate.sol";
+import {DepositCertificate, CoreWalletsUpdated} from "../src/DepositCertificate.sol";
 import {MockUSDT} from "../src/MockUSDT.sol";
 import {MockRejectTransfer} from "../src/MockRejectTransfer.sol";
 
@@ -406,6 +406,57 @@ contract FixedFundSplitEndToEndTest is Test {
         // Verify that all users have their original USDT balance minus deposits plus payouts
         // This calculation is complex due to penalties, but we can verify the system works correctly
         console.log("End-to-end test completed successfully!");
+    }
+
+    function test_UpdateCoreWallets() public {
+        // ========== SETUP NEW WALLETS ==========
+        address newSettlementWallet = makeAddr("newSettlementWallet");
+        address newInvestWallet = makeAddr("newInvestWallet");
+        address newDevOpsWallet = makeAddr("newDevOpsWallet");
+        address newAdvisorWallet = makeAddr("newAdvisorWallet");
+        address newMarketingWallet = makeAddr("newMarketingWallet");
+        address newOwnerWallet = makeAddr("newOwnerWallet");
+
+        // ========== VERIFY NON-OWNER CANNOT UPDATE ==========
+        vm.prank(user1);
+        vm.expectRevert();
+        depositCertificate.updateCoreWallets(
+            newSettlementWallet,
+            newInvestWallet,
+            newDevOpsWallet,
+            newAdvisorWallet,
+            newMarketingWallet,
+            newOwnerWallet
+        );
+
+        // ========== VERIFY OWNER CAN UPDATE ==========
+        vm.prank(owner);
+        vm.expectEmit(true, true, true, true);
+        emit CoreWalletsUpdated(
+            owner,
+            newSettlementWallet,
+            newInvestWallet,
+            newDevOpsWallet,
+            newAdvisorWallet,
+            newMarketingWallet,
+            newOwnerWallet
+        );
+        depositCertificate.updateCoreWallets(
+            newSettlementWallet,
+            newInvestWallet,
+            newDevOpsWallet,
+            newAdvisorWallet,
+            newMarketingWallet,
+            newOwnerWallet
+        );
+
+        // ========== VERIFY WALLETS ARE UPDATED ==========
+        assertEq(depositCertificate.settlementWallet(), newSettlementWallet, "Settlement wallet should be updated");
+        assertEq(depositCertificate.ivWallet(), newInvestWallet, "Invest wallet should be updated");
+        assertEq(depositCertificate.dvWallet(), newDevOpsWallet, "DevOps wallet should be updated");
+        assertEq(depositCertificate.adWallet(), newAdvisorWallet, "Advisor wallet should be updated");
+        assertEq(depositCertificate.mlWallet(), newMarketingWallet, "Marketing wallet should be updated");
+        assertEq(depositCertificate.bcWallet(), newOwnerWallet, "Owner wallet should be updated");
     }
 
     /**

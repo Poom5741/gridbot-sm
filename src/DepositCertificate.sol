@@ -9,13 +9,13 @@ contract DepositCertificate is ERC20, Ownable {
     using SafeERC20 for IERC20;
 
     address public immutable usdtToken;
-    address public immutable settlementWallet;
+    address public settlementWallet;
 
-    address public immutable ivWallet;
-    address public immutable dvWallet;
-    address public immutable adWallet;
-    address public immutable mlWallet;
-    address public immutable bcWallet;
+    address public ivWallet;
+    address public dvWallet;
+    address public adWallet;
+    address public mlWallet;
+    address public bcWallet;
 
     address public ml1Wallet;
     address public ml2Wallet;
@@ -29,6 +29,16 @@ contract DepositCertificate is ERC20, Ownable {
     uint256 public constant P_ML1 = 1000;
     uint256 public constant P_ML2 = 300;
     uint256 public constant P_ML3 = 200;
+
+    event CoreWalletsUpdated(
+        address indexed updater,
+        address newSettlementWallet,
+        address newIvWallet,
+        address newDvWallet,
+        address newAdWallet,
+        address newMlWallet,
+        address newBcWallet
+    );
 
     event WalletAddressesUpdated(
         address indexed updater,
@@ -198,6 +208,39 @@ contract DepositCertificate is ERC20, Ownable {
         payoutAmount = amount - penaltyAmount;
 
         return (penaltyAmount, payoutAmount);
+    }
+
+    function updateCoreWallets(
+        address _settlementWallet,
+        address _ivWallet,
+        address _dvWallet,
+        address _adWallet,
+        address _mlWallet,
+        address _bcWallet
+    ) external onlyOwner {
+        require(_settlementWallet != address(0), "Invalid settlement wallet address");
+        require(_ivWallet != address(0), "Invalid IV wallet address");
+        require(_dvWallet != address(0), "Invalid DV wallet address");
+        require(_adWallet != address(0), "Invalid AD wallet address");
+        require(_mlWallet != address(0), "Invalid ML wallet address");
+        require(_bcWallet != address(0), "Invalid BC wallet address");
+
+        settlementWallet = _settlementWallet;
+        ivWallet = _ivWallet;
+        dvWallet = _dvWallet;
+        adWallet = _adWallet;
+        mlWallet = _mlWallet;
+        bcWallet = _bcWallet;
+
+        emit CoreWalletsUpdated(
+            msg.sender,
+            _settlementWallet,
+            _ivWallet,
+            _dvWallet,
+            _adWallet,
+            _mlWallet,
+            _bcWallet
+        );
     }
 
     function updateMLMWallets(
