@@ -28,9 +28,9 @@ contract ShowFundSplitDemo is Script {
         console2.log("  marketing:", marketing);
         console2.log("  owner:", owner);
         console2.log("Dynamic MLM (initially same as deployer):");
-        console2.log("  level1:", fundSplit.level1Wallet());
-        console2.log("  level2:", fundSplit.level2Wallet());
-        console2.log("  level3:", fundSplit.level3Wallet());
+        console2.log("  level1:", fundSplit.level1_wallet());
+        console2.log("  level2:", fundSplit.level2_wallet());
+        console2.log("  level3:", fundSplit.level3_wallet());
         console2.log("");
 
         // Show calculation
@@ -58,9 +58,9 @@ contract ShowFundSplitDemo is Script {
 
         fundSplit.updateMLMWallets(newLevel1, newLevel2, newLevel3);
         console2.log("MLM wallets updated to:");
-        console2.log("  level1:", fundSplit.level1Wallet());
-        console2.log("  level2:", fundSplit.level2Wallet());
-        console2.log("  level3:", fundSplit.level3Wallet());
+        console2.log("  level1:", fundSplit.level1_wallet());
+        console2.log("  level2:", fundSplit.level2_wallet());
+        console2.log("  level3:", fundSplit.level3_wallet());
 
         vm.stopBroadcast();
     }

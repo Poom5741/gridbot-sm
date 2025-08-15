@@ -12,7 +12,7 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 contract MockRejectTransfer is ERC20 {
     using SafeERC20 for IERC20;
     
-    bool public shouldReject = true;
+    bool public should_reject = true;
     
     constructor() ERC20("Mock Reject Transfer", "MRT") {
         // Mint some initial tokens to the contract itself
@@ -23,7 +23,7 @@ contract MockRejectTransfer is ERC20 {
      * @dev Override transfer function to always revert
      */
     function transfer(address to, uint256 amount) public override returns (bool) {
-        if (shouldReject) {
+        if (should_reject) {
             revert("Transfer rejected by mock contract");
         }
         return super.transfer(to, amount);
@@ -33,7 +33,7 @@ contract MockRejectTransfer is ERC20 {
      * @dev Override transferFrom function to always revert
      */
     function transferFrom(address from, address to, uint256 amount) public override returns (bool) {
-        if (shouldReject) {
+        if (should_reject) {
             revert("Transfer rejected by mock contract");
         }
         return super.transferFrom(from, to, amount);
@@ -43,13 +43,13 @@ contract MockRejectTransfer is ERC20 {
      * @dev Allow transfers to be enabled for testing
      */
     function enableTransfers() external {
-        shouldReject = false;
+        should_reject = false;
     }
     
     /**
      * @dev Disable transfers again
      */
     function disableTransfers() external {
-        shouldReject = true;
+        should_reject = true;
     }
 }

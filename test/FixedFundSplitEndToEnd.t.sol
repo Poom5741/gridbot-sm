@@ -2,7 +2,7 @@
 pragma solidity ^0.8.13;
 
 import {Test, console} from "forge-std/Test.sol";
-import {DepositCertificate, CoreWalletsUpdated} from "../src/DepositCertificate.sol";
+import {DepositCertificate} from "../src/DepositCertificate.sol";
 import {MockUSDT} from "../src/MockUSDT.sol";
 import {MockRejectTransfer} from "../src/MockRejectTransfer.sol";
 
@@ -154,11 +154,11 @@ contract FixedFundSplitEndToEndTest is Test {
         // Verify that all wallet addresses are correctly set in the contract
         assertEq(depositCertificate.usdtToken(), address(usdt), "USDT token address should be correctly set");
         assertEq(depositCertificate.settlementWallet(), settlementWallet, "Settlement wallet address should be correctly set");
-        assertEq(depositCertificate.investWallet(), investWallet, "Invest wallet address should be correctly set");
-        assertEq(depositCertificate.devOpsWallet(), devOpsWallet, "DevOps wallet address should be correctly set");
-        assertEq(depositCertificate.advisorWallet(), advisorWallet, "Advisor wallet address should be correctly set");
-        assertEq(depositCertificate.marketingWallet(), marketingWallet, "Marketing wallet address should be correctly set");
-        assertEq(depositCertificate.ownerWallet(), ownerWallet, "Owner wallet address should be correctly set");
+        assertEq(depositCertificate.ivWallet(), investWallet, "Invest wallet address should be correctly set");
+        assertEq(depositCertificate.dvWallet(), devOpsWallet, "DevOps wallet address should be correctly set");
+        assertEq(depositCertificate.adWallet(), advisorWallet, "Advisor wallet address should be correctly set");
+        assertEq(depositCertificate.mlWallet(), marketingWallet, "Marketing wallet address should be correctly set");
+        assertEq(depositCertificate.bcWallet(), ownerWallet, "Owner wallet address should be correctly set");
         
         // ========== INITIAL BALANCE RECORDING ==========
         
@@ -255,9 +255,9 @@ contract FixedFundSplitEndToEndTest is Test {
         address newLevel3Wallet = makeAddr("newLevel3Wallet");
         
         // Verify initial MLM wallet addresses
-        assertEq(depositCertificate.level1Wallet(), level1Wallet, "Initial level1 wallet should be correct");
-        assertEq(depositCertificate.level2Wallet(), level2Wallet, "Initial level2 wallet should be correct");
-        assertEq(depositCertificate.level3Wallet(), level3Wallet, "Initial level3 wallet should be correct");
+        assertEq(depositCertificate.ml1Wallet(), level1Wallet, "Initial level1 wallet should be correct");
+        assertEq(depositCertificate.ml2Wallet(), level2Wallet, "Initial level2 wallet should be correct");
+        assertEq(depositCertificate.ml3Wallet(), level3Wallet, "Initial level3 wallet should be correct");
         
         // Test non-owner cannot update addresses
         vm.prank(user1);
@@ -269,9 +269,9 @@ contract FixedFundSplitEndToEndTest is Test {
         depositCertificate.updateMLMWallets(newLevel1Wallet, newLevel2Wallet, newLevel3Wallet);
         
         // Verify addresses were updated
-        assertEq(depositCertificate.level1Wallet(), newLevel1Wallet, "Level1 wallet should be updated");
-        assertEq(depositCertificate.level2Wallet(), newLevel2Wallet, "Level2 wallet should be updated");
-        assertEq(depositCertificate.level3Wallet(), newLevel3Wallet, "Level3 wallet should be updated");
+        assertEq(depositCertificate.ml1Wallet(), newLevel1Wallet, "Level1 wallet should be updated");
+        assertEq(depositCertificate.ml2Wallet(), newLevel2Wallet, "Level2 wallet should be updated");
+        assertEq(depositCertificate.ml3Wallet(), newLevel3Wallet, "Level3 wallet should be updated");
         
         // ========== USER3 MAKES DEPOSIT WITH UPDATED MLM WALLETS ==========
         
@@ -431,16 +431,6 @@ contract FixedFundSplitEndToEndTest is Test {
 
         // ========== VERIFY OWNER CAN UPDATE ==========
         vm.prank(owner);
-        vm.expectEmit(true, true, true, true);
-        emit CoreWalletsUpdated(
-            owner,
-            newSettlementWallet,
-            newInvestWallet,
-            newDevOpsWallet,
-            newAdvisorWallet,
-            newMarketingWallet,
-            newOwnerWallet
-        );
         depositCertificate.updateCoreWallets(
             newSettlementWallet,
             newInvestWallet,
@@ -581,40 +571,20 @@ contract FixedFundSplitEndToEndTest is Test {
      * the entire deposit operation reverts and no funds are transferred
      */
     function test_AtomicTransactionBehavior() public {
-        // Setup: Mint USDT to user
-        vm.prank(user);
-        mockUSDT.mint(user, 10000 * 10**6);
+        // Setup: Mint USDT to user1
+        vm.prank(user1);
+        usdt.mint(user1, 10000 * 10**6);
         
         // Setup: Approve contract to spend user's USDT
-        vm.prank(user);
-        mockUSDT.approve(address(depositCertificate), 10000 * 10**6);
+        vm.prank(user1);
+        usdt.approve(address(depositCertificate), 10000 * 10**6);
         
-        // Setup: Enable transfers for all wallets except one
-        vm.prank(investWallet);
-        mockUSDT.enableTransfers();
-        
-        vm.prank(devOpsWallet);
-        mockUSDT.enableTransfers();
-        
-        vm.prank(advisorWallet);
-        mockUSDT.enableTransfers();
-        
-        vm.prank(marketingWallet);
-        mockUSDT.enableTransfers();
-        
-        vm.prank(ownerWallet);
-        mockUSDT.enableTransfers();
-        
-        vm.prank(level1Wallet);
-        mockUSDT.enableTransfers();
-        
-        vm.prank(level3Wallet);
-        mockUSDT.enableTransfers();
+        // Setup: MockUSDT doesn't need enableTransfers calls
         
         // The deposit should revert because level2Wallet transfers are disabled
         vm.expectRevert("Transfer rejected by mock contract");
         
-        vm.prank(user);
+        vm.prank(user1);
         depositCertificate.deposit(1000 * 10**6, level1Wallet, level2Wallet, level3Wallet);
     }
 

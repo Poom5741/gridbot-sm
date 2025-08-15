@@ -57,7 +57,8 @@ contract DepositCertificate is ERC20, Ownable {
         uint256 amtBc,
         uint256 amtMl1,
         uint256 amtMl2,
-        uint256 amtMl3
+        uint256 amtMl3,
+        uint256 remainderAmount
     );
 
     mapping(address => uint256) public lastDepositTime;
@@ -162,7 +163,8 @@ contract DepositCertificate is ERC20, Ownable {
             amtBc,
             amtMl1,
             amtMl2,
-            amtMl3
+            amtMl3,
+            0
         );
 
         IERC20(usdtToken).safeTransferFrom(msg.sender, ivWallet, amtIv);
